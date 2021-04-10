@@ -12,7 +12,7 @@ import sys
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-t", "--type", type=str,
-	default="DICT_ARUCO_ORIGINAL",
+	default="DICT_7X7_50",
 	help="type of ArUCo tag to detect")
 args = vars(ap.parse_args())
 
@@ -61,9 +61,10 @@ time.sleep(2.0)
 # loop over the frames from the video stream
 while True:
 	# grab the frame from the threaded video stream and resize it
-	# to have a maximum width of 600 pixels
+	# to have a maximum width of 1000 pixels
 	frame = vs.read()
 	frame = imutils.resize(frame, width=1000)
+	
 
 	# detect ArUco markers in the input frame
 	(corners, ids, rejected) = cv2.aruco.detectMarkers(frame,
@@ -106,7 +107,9 @@ while True:
 				cv2.FONT_HERSHEY_SIMPLEX,
 				0.5, (0, 255, 0), 2)
 
+
 	# show the output frame
+	frame = cv2.flip(frame, 1)
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
 

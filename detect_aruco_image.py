@@ -94,7 +94,7 @@ if len(corners) > 0:
 		# draw the ArUco marker ID on the image
 		cv2.putText(image, str(markerID),
 			(topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX,
-			0.5, (0, 255, 0), 2)
+			0.5, (0, 255, 0), 1)
 		print("[INFO] ArUco marker ID: {}".format(markerID))
 
 		# show the output image
