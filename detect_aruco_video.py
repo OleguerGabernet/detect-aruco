@@ -69,6 +69,7 @@ while True:
 	# to have a maximum width of 1000 pixels
 	frame = vs.read()
 	frame = imutils.resize(frame, width=1000)
+	frame = imutils.rotate(frame, 180)
 	
 
 	# detect ArUco markers in the input frame
@@ -140,7 +141,7 @@ while True:
 
 
 	# show the output frame
-	# frame = cv2.flip(frame, 1)
+	frame = cv2.flip(frame, 1)
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
 
