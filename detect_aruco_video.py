@@ -8,11 +8,12 @@ import imutils
 import time
 import cv2
 import sys
+import numpy as np
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-t", "--type", type=str,
-	default="DICT_7X7_50",
+	default="DICT_6X6_50",
 	help="type of ArUCo tag to detect")
 args = vars(ap.parse_args())
 
@@ -53,10 +54,14 @@ print("[INFO] detecting '{}' tags...".format(args["type"]))
 arucoDict = cv2.aruco.Dictionary_get(ARUCO_DICT[args["type"]])
 arucoParams = cv2.aruco.DetectorParameters_create()
 
+
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
+
+
+
 
 # loop over the frames from the video stream
 while True:
@@ -69,6 +74,9 @@ while True:
 	# detect ArUco markers in the input frame
 	(corners, ids, rejected) = cv2.aruco.detectMarkers(frame,
 		arucoDict, parameters=arucoParams)
+
+	#center permanent variables
+	Centers = np.zeros((2,4), dtype= int)
 
 	# verify *at least* one ArUco marker was detected
 	if len(corners) > 0:
@@ -101,6 +109,9 @@ while True:
 			cY = int((topLeft[1] + bottomRight[1]) / 2.0)
 			cv2.circle(frame, (cX, cY), 4, (0, 0, 255), -1)
 
+			Centers[0][markerID] = int(cX)
+			Centers[1][markerID] = int(cY)
+
 			# draw the ArUco marker ID on the frame
 			cv2.putText(frame, str(markerID),
 				(topLeft[0], topLeft[1] - 15),
@@ -108,8 +119,28 @@ while True:
 				0.5, (0, 255, 0), 2)
 
 
+	all_four = True
+	for i in range(4):
+		if Centers[0][i] == 0:
+			all_four = False
+
+	
+	if all_four:
+		
+		C1 = (Centers[0][0],Centers[1][0])
+		C2 = (Centers[0][1],Centers[1][1])
+		C3 = (Centers[0][2],Centers[1][2])
+		C4 = (Centers[0][3],Centers[1][3])
+
+		cv2.line(frame, C1 , C2 , (255, 0, 0), 2)
+		cv2.line(frame, C2 , C4 , (255, 255, 0), 2)
+		cv2.line(frame, C4 , C3 , (0, 255, 0), 2)
+		cv2.line(frame, C3 , C1 , (255, 255, 0), 2)
+
+
+
 	# show the output frame
-	frame = cv2.flip(frame, 1)
+	# frame = cv2.flip(frame, 1)
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
 
